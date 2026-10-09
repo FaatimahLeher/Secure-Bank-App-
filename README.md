@@ -6,8 +6,8 @@ A console-based banking application written in Java that demonstrates Object-Ori
 hashing, strict input validation and role-based access control. All data is persisted to text files.
 
 ## Student Details
-- **Name:** [Faatimah Leher]
-- **Registration Number:** [H250430P]
+- **Name:** Faatimah Leher
+- **Registration Number:** H250430P
 
 ## Features
 - **User authentication** - login with salted PBKDF2-HMAC-SHA256 password hashes (never stored in plain text)
