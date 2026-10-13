@@ -1,4 +1,4 @@
-# Secure Banking Application
+# Secure Banking Application - H250430P
 
 ## Description
 A console-based banking application written in Java that demonstrates Object-Oriented Programming together with secure coding practices such as salted password,hashing, strict input validation and role-based access control. All data is persisted to text files.
@@ -22,16 +22,6 @@ A console-based banking application written in Java that demonstrates Object-Ori
 - **Checkbook requests** - customers request, admin approves
 - **Change password**
 
-## Project Structure
-```
-src/
-  entity/      User, Transaction, Role           (data model)
-  repository/  UserRepository                    (file persistence)
-  service/     UserService                       (business rules & security checks)
-  util/        PasswordUtil, Validator, BankException
-  main/        Main                              (console UI)
-data/          users.txt, transactions.txt, checkbook.txt
-```
 
 ## How to Run
 Requires JDK 11 or later. Run from the project root (the folder containing `src/` and `data/`):
