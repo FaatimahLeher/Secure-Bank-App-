@@ -181,6 +181,7 @@ public class Main {
                 case 7:
                     try {
                         info(userService.requestCheckbook(user));
+                        System.out.println("Checkbook request submitted. Please wait for admin approval.");
                     } catch (BankException e) {
                         error(e.getMessage());
                     }
