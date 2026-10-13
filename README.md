@@ -1,9 +1,7 @@
 # Secure Banking Application
 
 ## Description
-A console-based banking application written in Java that demonstrates Object-Oriented Programming
-(entity / repository / service layers) together with secure coding practices such as salted password
-hashing, strict input validation and role-based access control. All data is persisted to text files.
+A console-based banking application written in Java that demonstrates Object-Oriented Programming together with secure coding practices such as salted password,hashing, strict input validation and role-based access control. All data is persisted to text files.
 
 ## Student Details
 - **Name:** Faatimah Leher
@@ -47,8 +45,8 @@ java -cp out main.Main
 | Username | Password     | Role     |
 |----------|--------------|----------|
 | admin    | `Admin@1234` | Admin    |
-| alice    | `Alice@1234` | Customer |
-| bob      | `Bob@12345`  | Customer |
+| user1    | `User1@pass` | Customer |
+| user2    | `User2@pass` | Customer |
 
 Change these passwords after first login (menu option *Change my password*).
 

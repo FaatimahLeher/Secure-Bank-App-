@@ -1,4 +1,8 @@
+package repository;
 
+import entity.Role;
+import entity.Transaction;
+import entity.User;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -30,19 +34,23 @@ public class UserRepository {
     private final Path usersFile;
     private final Path transactionsFile;
     private final Path checkbookFile;
+    private final Path lockoutsFile;
 
     private final Map<String, User> users = new LinkedHashMap<>();
     private final List<Transaction> transactions = new ArrayList<>();
     private final Map<String, Boolean> checkbookRequests = new LinkedHashMap<>(); // true = approved
+    private final Map<String, long[]> lockouts = new LinkedHashMap<>();           // {failedCount, lockedUntilMillis}
 
     public UserRepository(Path dataDir) throws IOException {
         Files.createDirectories(dataDir);
         this.usersFile = dataDir.resolve("users.txt");
         this.transactionsFile = dataDir.resolve("transactions.txt");
         this.checkbookFile = dataDir.resolve("checkbook.txt");
+        this.lockoutsFile = dataDir.resolve("lockouts.txt");
         loadUsers();
         loadTransactions();
         loadCheckbook();
+        loadLockouts();
     }
 
     // ---------------------------------------------------------------- queries
@@ -63,7 +71,15 @@ public class UserRepository {
 
     public Map<String, Boolean> getCheckbookRequests() { return new LinkedHashMap<>(checkbookRequests); }
 
+    public long[] getLockout(String username) { return lockouts.get(username); }
+
     // --------------------------------------------------------------- mutations
+
+    public void setLockout(String username, long failedCount, long lockedUntil) {
+        lockouts.put(username, new long[] {failedCount, lockedUntil});
+    }
+
+    public void clearLockout(String username) { lockouts.remove(username); }
 
     public void addUser(User user) { users.put(user.getUsername(), user); }
 
@@ -104,6 +120,14 @@ public class UserRepository {
             lines.add(e.getKey() + SEP + (e.getValue() ? "APPROVED" : "PENDING"));
         }
         writeAtomically(checkbookFile, lines);
+    }
+
+    public void saveLockouts() throws IOException {
+        List<String> lines = new ArrayList<>();
+        for (Map.Entry<String, long[]> e : lockouts.entrySet()) {
+            lines.add(e.getKey() + SEP + e.getValue()[0] + SEP + e.getValue()[1]);
+        }
+        writeAtomically(lockoutsFile, lines);
     }
 
     /** Writes to a temp file first and then swaps it in, so a crash can never leave a half-written data file. */
@@ -154,6 +178,18 @@ public class UserRepository {
                 checkbookRequests.put(p[0], p[1].equals("APPROVED"));
             } else {
                 System.err.println("Warning: skipped corrupt line in " + checkbookFile.getFileName());
+            }
+        }
+    }
+
+    private void loadLockouts() throws IOException {
+        for (String line : readLines(lockoutsFile)) {
+            String[] p = line.split("\\|", -1);
+            try {
+                if (p.length != 3 || !users.containsKey(p[0])) throw new IllegalArgumentException();
+                lockouts.put(p[0], new long[] {Long.parseLong(p[1]), Long.parseLong(p[2])});
+            } catch (IllegalArgumentException e) {
+                System.err.println("Warning: skipped corrupt line in " + lockoutsFile.getFileName());
             }
         }
     }

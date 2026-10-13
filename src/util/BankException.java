@@ -1,4 +1,4 @@
-
+package util;
 
 /** Checked exception for any business-rule or validation failure. Messages are safe to show to the user. */
 public class BankException extends Exception {
